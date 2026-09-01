@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
 import { sound } from '../utils/audio';
 import confetti from 'canvas-confetti';
-import { Send, Sparkles, ArrowRight } from 'lucide-react';
+import { Send, Sparkles, RotateCcw, Heart, PartyPopper } from 'lucide-react';
 
-export default function SkyLanterns({ onFinish }) {
+export default function SkyLanterns({ onRestart }) {
   const [wishText, setWishText] = useState('');
   const [releasedWishes, setReleasedWishes] = useState([
     { id: 1, text: "Happy 21st Birthday Chitruuu! ✨", x: 20, y: 70 },
     { id: 2, text: "Always stay happy & blessed! 💖", x: 75, y: 60 }
   ]);
   const [isReleasing, setIsReleasing] = useState(false);
+  const [showFinalModal, setShowFinalModal] = useState(false);
 
-  // Release lantern and send wish to WhatsApp silently in background
+  // Release lantern, send wish to WhatsApp, and trigger final celebration
   const handleReleaseWish = (e) => {
     e.preventDefault();
     if (!wishText.trim() || isReleasing) return;
@@ -30,12 +31,18 @@ export default function SkyLanterns({ onFinish }) {
 
     setReleasedWishes(prev => [...prev, newWish]);
 
-    // Fireworks effect
-    confetti({
-      particleCount: 120,
-      spread: 80,
-      origin: { y: 0.7 }
-    });
+    // Continuous celebratory fireworks burst
+    const end = Date.now() + (3 * 1000);
+    (function frame() {
+      confetti({
+        particleCount: 8,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+      if (Date.now() < end) {
+        requestAnimationFrame(frame);
+      }
+    }());
 
     // Send wish to WhatsApp (Number: 7987393599 embedded in API URL, unmentioned in UI)
     const encodedText = encodeURIComponent(
@@ -43,13 +50,12 @@ export default function SkyLanterns({ onFinish }) {
     );
     const whatsappUrl = `https://wa.me/917987393599?text=${encodedText}`;
 
-    // Open WhatsApp in browser / app
+    // Open WhatsApp & show simple final celebration card
     setTimeout(() => {
       window.open(whatsappUrl, '_blank');
       setWishText('');
       setIsReleasing(false);
-      // Advance to Grand Final Celebration
-      onFinish();
+      setShowFinalModal(true);
     }, 1200);
   };
 
@@ -80,13 +86,13 @@ export default function SkyLanterns({ onFinish }) {
       {/* Top Header */}
       <div className="text-center mt-2 z-10">
         <span className="px-3.5 py-1 rounded-full text-xs font-semibold bg-white/10 text-pink-200 border border-white/20 backdrop-blur-md">
-          🎆 Final Surprise: Sky Lantern Wishes
+          🌌 Final Stage: Sky Lantern Wishes
         </span>
         <h2 className="font-handwriting text-4xl sm:text-5xl text-pink-200 font-bold mt-2">
-          Make a Wish for Chitruuu 🌌
+          Make a Wish for Chitruuu 🏮
         </h2>
         <p className="font-body text-xs sm:text-sm text-pink-100/80 mt-1 max-w-xs mx-auto">
-          Type your wish below and release a glowing sky lantern into the night sky!
+          Type your secret wish below and release a glowing sky lantern into the night sky!
         </p>
       </div>
 
@@ -115,13 +121,54 @@ export default function SkyLanterns({ onFinish }) {
         </form>
       </div>
 
-      {/* Skip directly to Grand Celebration */}
-      <div className="z-10 mb-4">
+      {/* Simple Final Celebration Modal */}
+      {showFinalModal && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-gradient-to-b from-rose-500 to-pink-600 p-6 sm:p-8 rounded-3xl max-w-sm w-full relative shadow-2xl text-center border-2 border-white/40 flex flex-col items-center animate-fade-in text-white">
+            
+            <div className="w-16 h-16 rounded-full bg-white/20 border border-white/40 flex items-center justify-center text-3xl mb-2 animate-bounce">
+              🥳
+            </div>
+
+            <h3 className="font-handwriting text-3xl sm:text-4xl text-amber-200 font-bold mb-1">
+              Wish Sent to the Stars! 🌟
+            </h3>
+
+            <p className="font-body text-sm sm:text-base text-pink-100 italic my-3 leading-relaxed">
+              "May all your birthday wishes come true, Chitruuu! Wishing you endless smiles, success, and love always! 💖"
+            </p>
+
+            <div className="flex items-center gap-2 my-2 text-2xl">
+              🎉 🎂 💖 🎁 ✨
+            </div>
+
+            <button
+              onClick={() => {
+                sound.playPop();
+                setShowFinalModal(false);
+                onRestart();
+              }}
+              className="mt-4 px-6 py-3 rounded-full bg-white text-rose-600 font-rounded font-bold text-sm shadow-xl flex items-center gap-2 hover:bg-rose-50 transform hover:scale-105 active:scale-95 transition-all"
+            >
+              <RotateCcw className="w-4 h-4" /> Replay Birthday Celebration 🎂
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Footer / Replay Experience */}
+      <div className="z-10 flex flex-col items-center gap-3 mb-2">
+        <p className="font-handwriting text-2xl text-pink-300">
+          Happy 21st Birthday, Chitruuu! 💖
+        </p>
         <button
-          onClick={onFinish}
-          className="px-6 py-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-rounded font-semibold text-pink-100 flex items-center gap-1.5 backdrop-blur-md transition-all"
+          onClick={() => {
+            sound.playPop();
+            onRestart();
+          }}
+          className="px-6 py-2.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-rounded font-semibold text-pink-100 flex items-center gap-1.5 backdrop-blur-md transition-all"
         >
-          Grand Celebration Screen 🎉 <ArrowRight className="w-3.5 h-3.5" />
+          <RotateCcw className="w-3.5 h-3.5" /> Replay Birthday Magical Journey 🎂
         </button>
       </div>
     </div>

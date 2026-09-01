@@ -4,12 +4,23 @@ import EvasiveQuestion from './components/EvasiveQuestion';
 import CakeBlowout from './components/CakeBlowout';
 import PhotoGallery from './components/PhotoGallery';
 import SecretEnvelopes from './components/SecretEnvelopes';
-import SkyLanterns from './components/SkyLanterns';
+import HeartMessageEnvelope from './components/HeartMessageEnvelope';
+import OneLastThingGift from './components/OneLastThingGift';
 import GrandCelebration from './components/GrandCelebration';
+import SkyLanterns from './components/SkyLanterns';
 import MusicPlayer from './components/MusicPlayer';
 
 export default function App() {
-  // Stage 1: CardEntry, Stage 2: EvasiveQuestion, Stage 3: CakeBlowout, Stage 4: PhotoGallery, Stage 5: SecretEnvelopes, Stage 6: SkyLanterns, Stage 7: GrandCelebration
+  // Final Stage Flow:
+  // 1: CardEntry
+  // 2: EvasiveQuestion
+  // 3: CakeBlowout
+  // 4: PhotoGallery
+  // 5: SecretEnvelopes
+  // 6: HeartMessageEnvelope
+  // 7: OneLastThingGift
+  // 8: GrandCelebration (Second Last Page: Fireworks & Birthday Queen Card)
+  // 9: SkyLanterns (Final Last Page: Wish Lantern Release & WhatsApp Forwarding)
   const [stage, setStage] = useState(1);
 
   // Generate random floating hearts for cute background
@@ -19,7 +30,7 @@ export default function App() {
     <div className="relative min-h-screen bg-gradient-to-br from-pink-100 via-rose-100 to-pink-200 font-body overflow-x-hidden">
       
       {/* Floating Hearts Background Layer */}
-      {stage !== 6 && stage !== 7 && (
+      {stage !== 8 && stage !== 9 && (
         <div className="heart-bg">
           {hearts.map((_, i) => (
             <div
@@ -47,8 +58,10 @@ export default function App() {
         {stage === 3 && <CakeBlowout onNext={() => setStage(4)} />}
         {stage === 4 && <PhotoGallery onNext={() => setStage(5)} />}
         {stage === 5 && <SecretEnvelopes onNext={() => setStage(6)} />}
-        {stage === 6 && <SkyLanterns onFinish={() => setStage(7)} />}
-        {stage === 7 && <GrandCelebration onRestart={() => setStage(1)} />}
+        {stage === 6 && <HeartMessageEnvelope onNext={() => setStage(7)} />}
+        {stage === 7 && <OneLastThingGift onNext={() => setStage(8)} />}
+        {stage === 8 && <GrandCelebration onNext={() => setStage(9)} />}
+        {stage === 9 && <SkyLanterns onRestart={() => setStage(1)} />}
       </div>
     </div>
   );

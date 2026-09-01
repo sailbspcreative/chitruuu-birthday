@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import { sound } from '../utils/audio';
 import confetti from 'canvas-confetti';
-import { Sparkles, Heart, Gift, Award, RotateCcw, PartyPopper } from 'lucide-react';
+import { Sparkles, Heart, Gift, Award, ArrowRight, PartyPopper } from 'lucide-react';
 import chitruuu2 from '../assets/chitruuu_2.jpg';
 
-export default function GrandCelebration({ onRestart }) {
+export default function GrandCelebration({ onNext }) {
   useEffect(() => {
     sound.playBirthdaySong();
 
@@ -88,17 +88,17 @@ export default function GrandCelebration({ onRestart }) {
         </div>
       </div>
 
-      {/* Replay Celebration Button */}
+      {/* Button to proceed to Final Sky Lantern Wish */}
       <div className="mb-4">
         <button
           onClick={() => {
             sound.playPop();
-            onRestart();
+            onNext();
           }}
           className="px-8 py-3.5 rounded-full bg-white text-rose-700 font-rounded font-bold text-base shadow-2xl flex items-center gap-2 hover:bg-rose-50 transform hover:scale-105 active:scale-95 transition-all"
         >
-          <RotateCcw className="w-5 h-5 text-rose-600" />
-          Replay Birthday Magical Journey 🎂
+          Make a Wish & Launch Sky Lantern 🏮✨
+          <ArrowRight className="w-5 h-5 text-rose-600" />
         </button>
       </div>
     </div>
