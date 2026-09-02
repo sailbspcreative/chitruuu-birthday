@@ -1,10 +1,16 @@
-// Web Audio API Synthesizer for cute Birthday Chimes & Sound FX
+import arzKiyaHaiAudio from '../assets/arz_kiya_hai_instrumental.webm';
+
+// Web Audio API & Instrumental Background Audio Manager
 class SoundFX {
   constructor() {
     this.ctx = null;
+    this.bgAudio = new Audio(arzKiyaHaiAudio);
+    this.bgAudio.loop = true;
+    this.bgAudio.volume = 0.5; // Sweet ambient volume
+    this.isBGMPlaying = false;
   }
 
-  init() {
+  initCtx() {
     if (!this.ctx) {
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
       this.ctx = new AudioCtx();
@@ -14,9 +20,39 @@ class SoundFX {
     }
   }
 
+  // Play "Arz Kiya Hai" Instrumental background song
+  playBackgroundMusic() {
+    this.initCtx();
+    this.bgAudio.play().then(() => {
+      this.isBGMPlaying = true;
+    }).catch(err => {
+      console.log('Audio autoplay waiting for user click:', err);
+    });
+  }
+
+  pauseBackgroundMusic() {
+    this.bgAudio.pause();
+    this.isBGMPlaying = false;
+  }
+
+  toggleBackgroundMusic() {
+    if (this.bgAudio.paused) {
+      this.playBackgroundMusic();
+      return true;
+    } else {
+      this.pauseBackgroundMusic();
+      return false;
+    }
+  }
+
+  isMusicPlaying() {
+    return !this.bgAudio.paused;
+  }
+
+  // Cute pop sound effect for clicks
   playPop() {
     try {
-      this.init();
+      this.initCtx();
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
       
@@ -33,14 +69,14 @@ class SoundFX {
       osc.start();
       osc.stop(this.ctx.currentTime + 0.08);
     } catch (e) {
-      console.log('Audio init on user interaction required', e);
+      console.log('Audio init required', e);
     }
   }
 
+  // White noise sound for candle blow out
   playBlowout() {
     try {
-      this.init();
-      // White noise sound for candle blow out
+      this.initCtx();
       const bufferSize = this.ctx.sampleRate * 0.5;
       const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
       const data = buffer.getChannelData(0);
@@ -69,40 +105,9 @@ class SoundFX {
     }
   }
 
+  // Backwards compatibility method
   playBirthdaySong() {
-    try {
-      this.init();
-      // Happy Birthday melody notes (freq in Hz, duration in s)
-      const notes = [
-        { f: 261.63, d: 0.3 }, { f: 261.63, d: 0.3 }, { f: 293.66, d: 0.6 }, { f: 261.63, d: 0.6 }, { f: 349.23, d: 0.6 }, { f: 329.63, d: 1.0 },
-        { f: 261.63, d: 0.3 }, { f: 261.63, d: 0.3 }, { f: 293.66, d: 0.6 }, { f: 261.63, d: 0.6 }, { f: 392.00, d: 0.6 }, { f: 349.23, d: 1.0 },
-        { f: 261.63, d: 0.3 }, { f: 261.63, d: 0.3 }, { f: 523.25, d: 0.6 }, { f: 440.00, d: 0.6 }, { f: 349.23, d: 0.6 }, { f: 329.63, d: 0.6 }, { f: 293.66, d: 0.6 },
-        { f: 466.16, d: 0.3 }, { f: 466.16, d: 0.3 }, { f: 440.00, d: 0.6 }, { f: 349.23, d: 0.6 }, { f: 392.00, d: 0.6 }, { f: 349.23, d: 1.2 }
-      ];
-
-      let startTime = this.ctx.currentTime + 0.1;
-
-      notes.forEach(note => {
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(note.f, startTime);
-
-        gain.gain.setValueAtTime(0.2, startTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, startTime + note.d - 0.05);
-
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-
-        osc.start(startTime);
-        osc.stop(startTime + note.d);
-
-        startTime += note.d;
-      });
-    } catch (e) {
-      console.log('Audio err', e);
-    }
+    this.playBackgroundMusic();
   }
 }
 
