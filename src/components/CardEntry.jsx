@@ -14,7 +14,7 @@ export default function CardEntry({ onOpen }) {
       {/* Floating Header Badges */}
       <div className="mb-6 animate-float">
         <span className="px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider bg-white/70 text-rose-500 shadow-sm border border-rose-200/50">
-          ✨ Special Birthday Invitation ✨
+          ✨ Special Birthday Wishes ✨
         </span>
       </div>
 
